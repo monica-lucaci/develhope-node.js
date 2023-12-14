@@ -1,43 +1,6 @@
 const Joi = require("joi");
-const pgPromise = require("pg-promise");
-const dotenv = require("dotenv");
 
-dotenv.config();
-
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbHost = process.env.DB_HOST;
-const dbPort = process.env.DB_PORT;
-const dbName = process.env.DB_NAME;
-
-const db = pgPromise()(`postgres://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`);
-
-console.log(db);
-
-db.connect()
-  .then((obj) => {
-    obj.done(); // success, release the connection
-    console.log("Database connection successful");
-  })
-  .catch((error) => {
-    console.error("Error connecting to the database:", error);
-  });
-
-const setupDb = async () => {
-  db.none(`
-    DROP TABLE IF EXISTS planets;
-
-
-    CREATE TABLE planets (
-        id SERIAL NOT NULL PRIMARY KEY,
-        name TEXT NOT NULL,
-        image TEXT
-    );
-    `);
-  await db.none(`INSERT INTO planets (name) VALUES ('Earth')`);
-  await db.none(`INSERT INTO planets (name) VALUES ('Mars')`);
-};
-setupDb();
+const db = require("../db");
 
 const getAll = async (req, res) => {
   const planets = await db.many(`SELECT  * FROM planets`);
@@ -73,8 +36,6 @@ const create = async (req, res) => {
   }
 };
 
-
-
 const updateById = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
@@ -88,7 +49,6 @@ const updateById = async (req, res) => {
   }
 };
 
-
 const deleteById = async (req, res) => {
   const { id } = req.params;
   await db.none(`DELETE FROM planets WHERE id=$1`, Number(id));
@@ -97,18 +57,17 @@ const deleteById = async (req, res) => {
 };
 
 const createImage = async (req, res) => {
-  console.log(req.file)
-  const {id} = req.params;
+  console.log(req.file);
+  const { id } = req.params;
   const fileName = req.file?.path;
 
-  if(fileName){
-    db.none(`UPDATE planets SET image=$2 WHERE id=$1`, [id, fileName])
-     res.status(201).json({msg: "planet image upload successfully"})
+  if (fileName) {
+    db.none(`UPDATE planets SET image=$2 WHERE id=$1`, [id, fileName]);
+    res.status(201).json({ msg: "planet image upload successfully" });
   } else {
-    res.status(400).json({msg: "planet image failed to upload"})
+    res.status(400).json({ msg: "planet image failed to upload" });
   }
- 
-}
+};
 
 module.exports = {
   getAll,
@@ -116,5 +75,5 @@ module.exports = {
   create,
   updateById,
   deleteById,
-  createImage
+  createImage,
 };

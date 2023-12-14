@@ -48,6 +48,7 @@ app.put("/api/planets/:id", updateById);
 // DELETE A PLANET BY ID
 app.delete("/api/planets/:id", deleteById);
 
+// ADD IMAGE
 app.post("/api/planets/:id/image", upload.single("image"), createImage);
 
 
