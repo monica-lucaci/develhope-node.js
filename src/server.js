@@ -1,8 +1,12 @@
 const express = require("express");
-
+const multer = require("multer");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const Joi = require("joi");
+const passport = require("passport");
+const passportJWT = require("passport-jwt");
+const { logIn, signUp } = require("./controllers/users"); 
+
 const {
   getAll,
   getOneById,
@@ -12,7 +16,7 @@ const {
   createImage,
 } = require("./controllers/planets");
 
-const multer = require("multer");
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -50,6 +54,13 @@ app.delete("/api/planets/:id", deleteById);
 
 // ADD IMAGE
 app.post("/api/planets/:id/image", upload.single("image"), createImage);
+
+// LOGIN
+app.post("/api/users/login", logIn);
+
+// SIGN UP
+app.post("/api/users/signup", signUp);
+
 
 
 app.listen(port, () => {
