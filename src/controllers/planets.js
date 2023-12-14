@@ -1,10 +1,18 @@
-const Joi = require("joi");
 
-const db = require("../db");
+
+const Joi = require("joi");
+const db = require("../db.js");
+
+
 
 const getAll = async (req, res) => {
-  const planets = await db.many(`SELECT  * FROM planets`);
-  res.status(200).json(planets);
+  try {
+    const planets = await db.db.many(`SELECT * FROM planets`);
+    res.status(200).json(planets);
+  } catch (error) {
+    console.error('Error retrieving planets:', error);
+    res.status(500).json({ msg: 'Error retrieving planets' });
+  }
 };
 
 const getOneById = async (req, res) => {
