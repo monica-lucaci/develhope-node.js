@@ -51,4 +51,16 @@ const signUp = async (req, res) => {
   }
 };
 
-module.exports = { logIn, signUp };
+const logOut = async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      await db.none(`UPDATE users SET token=NULL WHERE id=$1`, userId);
+      res.status(200).json({ msg: "Logout successful" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "An error occurred during logout." });
+    }
+  };
+  
+  module.exports = { logIn, signUp, logOut };

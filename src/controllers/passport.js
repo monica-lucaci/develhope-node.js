@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
-const { db } = require("./db");
+const { db } = require("../db");
 
 const { SECRET_KEY } = process.env;
 

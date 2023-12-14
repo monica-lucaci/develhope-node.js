@@ -3,9 +3,10 @@ const multer = require("multer");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const Joi = require("joi");
-const passport = require("passport");
+const passport = require("./controllers/passport");
 const passportJWT = require("passport-jwt");
-const { logIn, signUp } = require("./controllers/users"); 
+const { logIn, signUp, logOut } = require("./controllers/users");
+const authorize = require("./controllers/authorize.js");
 
 const {
   getAll,
@@ -15,8 +16,6 @@ const {
   deleteById,
   createImage,
 } = require("./controllers/planets");
-
-
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -61,7 +60,8 @@ app.post("/api/users/login", logIn);
 // SIGN UP
 app.post("/api/users/signup", signUp);
 
-
+// LOGOUT
+app.get("/api/users/logout", authorize, logOut);
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
